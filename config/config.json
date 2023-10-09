@@ -1,0 +1,14 @@
+{
+    "listeners": {
+        "*:8300": {
+            "application": "simple_ruby_app"
+        }
+    },
+    "applications": {
+        "simple_ruby_app": {
+            "type": "ruby",
+            "working_directory": "/www/app",
+            "script": "app.rb"
+        }
+    }
+}
