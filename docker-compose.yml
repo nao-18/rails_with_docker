@@ -1,42 +1,33 @@
 version: '3'
-
 services:
-  ruby_app:
-    build: ./ruby_app
-    command: bundle exec puma -C puma.rb
+  web:
+    build: .
+    command: bundle exec puma -C config/puma.rb
     volumes:
-      - ./ruby_app:/app
-    environment:
-      DATABASE_URL: mysql2://user:password@mysql/mydb
-
+      - ./app:/app
+    depends_on:
+      - db
+      - redis
   nginx:
     image: nginx:latest
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - ruby_app
-
-  mysql:
+      - web
+  db:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mydb
+      MYSQL_DATABASE: rails_project_development
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
-
+      - db-data:/var/lib/mysql
   redis:
-    image: redis:6.2
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
+    image: redis:latest
 
 volumes:
-  mysql-data:
-  redis-data:
+  db-data:
+    driver: local
