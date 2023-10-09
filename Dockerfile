@@ -1,11 +1,14 @@
 FROM ruby:3.1
 
-RUN apt-get update -qq && apt-get install -y nodejs python3
-RUN gem install rails
+# OSのパッケージを更新して、必要なものをインストール
+RUN apt-get update -qq && apt-get install -y nodejs
 
+# アプリケーションのディレクトリを作成
 WORKDIR /app
 
-COPY Gemfile ./
-RUN bundle install
+# GemfileとGemfile.lockをコピーしてbundle install
+COPY ./app/Gemfile ./
+RUN gem install bundler && bundle install
 
+# アプリケーションのコードをコピー
 COPY ./app /app
